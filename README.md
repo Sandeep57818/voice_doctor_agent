@@ -4,6 +4,10 @@ A Spring Boot and Vite application that lets a caller check doctor availability 
 
 **Stack:** Java 17, Spring Boot 3.4, Maven, Google Gemini, ElevenLabs TTS, browser speech recognition, and a vanilla JavaScript Vite dashboard.
 
+## Pipeline
+
+During a call, the browser transcribes speech and sends it to the Spring Boot API. Gemini, when configured, interprets the request; the backend checks availability or handles confirmed bookings and cancellations against in-memory clinic data, then returns text and optional ElevenLabs audio for playback, with browser speech synthesis as a fallback.
+
 ## Run
 
 Java 17 or later must be installed:
