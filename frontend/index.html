@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f5f4ee" />
+  <meta name="description" content="Careline clinic appointments, made simple." />
+  <title>Careline — Clinic desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Careline clinic desk home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 36 36" fill="none">
+            <path d="M18 5.5v25M5.5 18h25M9.16 9.16l17.68 17.68M26.84 9.16 9.16 26.84" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+            <circle cx="18" cy="18" r="4.3" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">careline<span class="brand-period">.</span></span>
+        <span class="brand-divider"></span>
+        <span class="brand-context">Clinic desk</span>
+      </a>
+      <div class="topbar-right">
+        <span class="open-indicator"><i></i> Front desk open</span>
+        <button id="callBtn" class="cta">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.3 3.8 8.5 7 7.1 8.5c.8 1.7 2.2 3.1 3.9 3.9l1.5-1.4 3.2 2.2-.5 2.5c-.1.6-.7 1-1.3.9C8.5 15.8 4.2 11.5 3.4 6.1c-.1-.6.3-1.2.9-1.3l2-.5Z" fill="currentColor"/></svg>
+          <span>Talk to Maya</span>
+          <span class="cta-arrow" aria-hidden="true">↗</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="welcome">
+        <div class="welcome-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> A better kind of front desk</p>
+          <h1>Good care starts<br />with <em>a conversation.</em></h1>
+          <p class="welcome-note">Meet Maya, your clinic's voice concierge. Check availability or make an appointment, without the hold music.</p>
+          <button class="welcome-link" id="welcomeCall" type="button">Start a conversation <span aria-hidden="true">↗</span></button>
+        </div>
+        <div class="welcome-art" aria-hidden="true">
+          <div class="art-orbit orbit-one"></div>
+          <div class="art-orbit orbit-two"></div>
+          <div class="art-sun"></div>
+          <div class="art-leaf leaf-one"></div>
+          <div class="art-leaf leaf-two"></div>
+          <div class="art-leaf leaf-three"></div>
+          <span class="art-caption">HERE, WHEN YOU NEED US</span>
+          <span class="art-star">✳</span>
+        </div>
+      </section>
+
+      <section class="overview" aria-label="Clinic overview">
+        <div class="overview-label">
+          <span class="eyebrow">TODAY AT CARELINE</span>
+          <span class="overview-date" id="todayDate"></span>
+        </div>
+        <div class="stats">
+          <article class="stat">
+            <span class="stat-label">Specialists</span>
+            <strong id="doctorCount">—</strong>
+            <span class="stat-foot">Here to help</span>
+          </article>
+          <article class="stat stat-highlight">
+            <span class="stat-label">Open appointments</span>
+            <strong id="slotCount">—</strong>
+            <span class="stat-foot">Across the clinic</span>
+          </article>
+          <article class="stat">
+            <span class="stat-label">On the books</span>
+            <strong id="apptCount">0</strong>
+            <span class="stat-foot">Patient visits</span>
+          </article>
+        </div>
+      </section>
+
+      <div class="section-rule"></div>
+
+      <div class="content-grid">
+        <section class="doctors-section" aria-labelledby="doctorsHeading">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">YOUR CARE TEAM</p>
+              <h2 id="doctorsHeading">Meet the specialists</h2>
+            </div>
+            <label class="search-box">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.8" cy="8.8" r="5.6"/><path d="m13 13 4 4"/></svg>
+              <input id="doctorFilter" type="search" placeholder="Find a specialist" autocomplete="off" aria-label="Find a specialist" />
+            </label>
+          </div>
+          <div id="doctors" class="doctors"></div>
+        </section>
+
+        <aside class="appointments-section" aria-labelledby="appointmentsHeading">
+          <div class="section-heading appointments-heading">
+            <div>
+              <p class="eyebrow">THE VISIT LIST</p>
+              <h2 id="appointmentsHeading">Appointments</h2>
+            </div>
+            <span class="live-label"><i></i> LIVE</span>
+          </div>
+          <div id="appts" class="ledger"></div>
+          <div class="privacy-note">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.8 4 5.2v4.5c0 3.6 2.5 6.2 6 7.5 3.5-1.3 6-3.9 6-7.5V5.2l-6-2.4Z"/><path d="m7.5 9.8 1.7 1.7 3.5-3.6"/></svg>
+            <span>Patient information is kept private.</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <div id="scrim" class="scrim"></div>
+  <aside id="phone" class="phone" aria-live="polite" aria-label="Call with Maya">
+    <div class="phone-shell">
+      <div class="phone-topline"><span></span><i></i><span></span></div>
+      <div class="screen">
+        <div class="call-top">
+          <button id="closeCall" class="close-call" type="button" aria-label="Close call window">×</button>
+          <span class="call-label">CARELINE · VOICE CONCIERGE</span>
+          <span class="call-secure"><i></i> PRIVATE CALL</span>
+        </div>
+        <div class="who">
+          <div class="avatar"><span>M</span><i></i></div>
+          <div class="who-copy">
+            <b>Maya</b>
+            <span id="status">Ready when you are</span>
+          </div>
+          <time id="timer">00:00</time>
+        </div>
+        <div class="wave-wrap">
+          <canvas id="wave" width="600" height="120" aria-hidden="true"></canvas>
+          <span class="wave-caption">LISTENING WITH CARE</span>
+        </div>
+        <div id="transcript" class="transcript"></div>
+        <div id="card" class="card"></div>
+        <div class="call-bottom">
+          <p class="call-hint">A few words is all it takes.</p>
+          <div class="controls">
+            <button id="muteBtn" class="round mute" type="button" title="Mute microphone">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M5 11.5a7 7 0 0 0 14 0M12 18.5V22m-4 0h8"/></svg>
+              <span>Mute</span>
+            </button>
+            <button id="endBtn" class="round end" type="button" title="End call">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 14.5c5.2-4.1 11.8-4.1 17 0l-2.2 4.1-4-1.5-.3-2.3a11 11 0 0 0-4 0l-.3 2.3-4 1.5-2.2-4.1Z"/></svg>
+              <span>End call</span>
+            </button>
+          </div>
+          <p class="call-footnote">Your call may be transcribed to help with your appointment.</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
