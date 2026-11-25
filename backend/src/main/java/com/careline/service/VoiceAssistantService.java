@@ -20,6 +20,7 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -77,9 +78,13 @@ public class VoiceAssistantService {
             resetConversation();
         }
         if (googleApiKey == null || googleApiKey.isBlank()) {
-            return handleOfflineConversation(callerMessage);
+            return offlineFallback(callerMessage);
         }
-        JsonNode action = callGemini(callerMessage);
+        Optional<JsonNode> geminiAction = callGemini(callerMessage);
+        if (geminiAction.isEmpty()) {
+            return offlineFallback(callerMessage);
+        }
+        JsonNode action = geminiAction.get();
         String actionType = text(action, "action", "reply");
         Map<String, Object> toolResult = new LinkedHashMap<>();
 
@@ -290,6 +295,12 @@ public class VoiceAssistantService {
         return response;
     }
 
+    private Map<String, Object> offlineFallback(String message) {
+        Map<String, Object> response = handleOfflineConversation(message);
+        response.put("aiFallback", true);
+        return response;
+    }
+
     private String doctorDirectory() {
         return "Our doctors are " + clinicData.doctors.stream()
                 .map(doctor -> doctor.name() + ", " + doctor.speciality())
@@ -400,7 +411,7 @@ public class VoiceAssistantService {
                 .trim();
     }
 
-    private JsonNode callGemini(String message) {
+    private Optional<JsonNode> callGemini(String message) {
         if (googleApiKey == null || googleApiKey.isBlank()) {
             String normalized = message.toLowerCase();
             ObjectNode fallback = objectMapper.createObjectNode();
@@ -423,7 +434,7 @@ public class VoiceAssistantService {
             } else {
                 fallback.put("reply", "I am ready to help with availability, booking, or cancellation.");
             }
-            return fallback;
+            return Optional.of(fallback);
         }
 
         ObjectNode request = objectMapper.createObjectNode();
@@ -465,20 +476,24 @@ public class VoiceAssistantService {
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
                 String apiMessage = root.path("error").path("message").asText("");
                 LOGGER.warn("Gemini request failed with HTTP {}: {}", response.statusCode(), apiMessage);
-                return objectMapper.createObjectNode().put("action", "reply")
-                        .put("reply", "The AI service rejected the request. Please verify the Gemini API key.");
+                return Optional.empty();
             }
             String generated = root.path("candidates").path(0).path("content").path("parts").path(0)
                     .path("text").asText("");
             generated = generated.replace("```json", "").replace("```", "").trim();
             int start = generated.indexOf('{');
             int end = generated.lastIndexOf('}');
-            if (start >= 0 && end > start) return objectMapper.readTree(generated.substring(start, end + 1));
+            if (start >= 0 && end > start) {
+                return Optional.of(objectMapper.readTree(generated.substring(start, end + 1)));
+            }
+            LOGGER.warn("Gemini returned no usable action; falling back to the basic assistant");
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Gemini request was interrupted; falling back to the basic assistant", exception);
         } catch (Exception exception) {
-            LOGGER.warn("Gemini request could not be completed", exception);
+            LOGGER.warn("Gemini request could not be completed; falling back to the basic assistant", exception);
         }
-        return objectMapper.createObjectNode().put("action", "reply")
-                .put("reply", "I could not reach the AI service. Please try again.");
+        return Optional.empty();
     }
 
     private String buildReply(JsonNode action, Map<String, Object> toolResult) {

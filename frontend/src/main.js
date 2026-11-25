@@ -196,7 +196,7 @@ async function sendMessage(message, greeting = false) {
     data = { reply: "The Careline backend is unavailable. Please restart the Java server." };
   }
   addMsg("bot", data.reply);
-  setStatus("Connected");
+  setStatus(data.aiFallback ? "AI unavailable · basic mode" : "Connected");
 
   try {
     if (data.audioBase64) {

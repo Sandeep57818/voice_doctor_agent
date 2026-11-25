@@ -8,6 +8,8 @@ A Spring Boot and Vite application that lets a caller check doctor availability 
 
 During a call, the browser transcribes speech and sends it to the Spring Boot API. Gemini, when configured, interprets the request; the backend checks availability or handles confirmed bookings and cancellations against in-memory clinic data, then returns text and optional ElevenLabs audio for playback, with browser speech synthesis as a fallback.
 
+If Gemini is unavailable or its key is invalid, the app switches to its basic appointment flow and shows that status in the call UI.
+
 ## Run
 
 Java 17 or later must be installed:
